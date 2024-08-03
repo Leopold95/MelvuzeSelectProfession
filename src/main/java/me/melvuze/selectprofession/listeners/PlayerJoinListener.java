@@ -1,6 +1,7 @@
 package me.melvuze.selectprofession.listeners;
 
 import me.melvuze.selectprofession.SelectProfession;
+import me.melvuze.selectprofession.core.Config;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -24,5 +25,8 @@ public class PlayerJoinListener implements Listener {
         if(!pdc.has(plugin.getKeys().PROFESSION_COUNT)){
             pdc.set(plugin.getKeys().PROFESSION_COUNT, PersistentDataType.INTEGER, 0);
         }
+
+        if(!pdc.has(plugin.getKeys().PROFESSION_POINTS_AMOUNT))
+            pdc.set(plugin.getKeys().PROFESSION_POINTS_AMOUNT, PersistentDataType.INTEGER, Config.getInt("default-prof-points"));
     }
 }

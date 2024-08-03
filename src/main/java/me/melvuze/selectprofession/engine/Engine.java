@@ -6,23 +6,19 @@ import me.melvuze.selectprofession.core.Config;
 import me.melvuze.selectprofession.inventories.SelectProfessionInventory;
 import me.melvuze.selectprofession.models.ProfessionModel;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.TextComponent;
 import net.luckperms.api.node.Node;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataType;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
+import java.util.logging.Level;
 
 public class Engine {
     private SelectProfession plugin;
@@ -44,7 +40,7 @@ public class Engine {
         bannedSlots = new ArrayList<>();
         professionsNameSpaces = new ArrayList<>();
 
-        tryLoadProfessions();
+        loadProfessions();
 
         buttonFormats = new ButtonFormats(this, this.plugin);
     }
@@ -58,6 +54,29 @@ public class Engine {
         player.openInventory(inv);
     }
 
+
+    /**
+     * Клик на проффесию в меню
+     * @param player игрок
+     * @param inv инвентарь
+     * @param clickedProfession проффесия, на которую нажали
+     */
+    public void onProfessionClicked(Player player, Inventory inv, ProfessionModel clickedProfession){
+        //List<ProfessionModel> playerProfessions = getPlayerProfessions(player);
+        if(getPlayerProfessions(player).contains(clickedProfession)){
+            player.sendMessage(Config.getMessage("already-selected"));
+            return;
+        }
+    }
+
+    /**
+     * Клик на проффесиию в меню
+     * @param player кликнувший игрок
+     * @param slot слот
+     * @param inv инвентарь
+     * @param key ключ
+     * @param type тип
+     */
     public void onSomeProfessionClicked(Player player, int slot, Inventory inv, String key, String type){
         Optional<ProfessionModel> professionOpt = plugin.getEngine().getProfessions().stream()
                 .filter(p -> p.getKey().asString().equals(key))
@@ -149,6 +168,11 @@ public class Engine {
         }
     }
 
+    /**
+     * Найти проффесию по строковому ключу
+     * @param key ключ
+     * @return профессия
+     */
     private Optional<ProfessionModel> getByStringNameSpace(String key){
         return professions.stream().filter(p -> p.getKey().asString().equals(key)).findFirst();
     }
@@ -168,9 +192,9 @@ public class Engine {
     }
 
     /**
-     * Прогрущка всех проффесий
+     * Прогрузка всех профессий
      */
-    private void tryLoadProfessions(){
+    private void loadProfessions(){
         professions = new ArrayList<>();
 
         ConfigurationSection section = Config.getSection("professions");
@@ -180,6 +204,8 @@ public class Engine {
             plugin.getServer().getPluginManager().disablePlugin(plugin);
             return;
         }
+
+        int amount = 0;
 
         for(String key: section.getKeys(false)){
             try {
@@ -199,6 +225,7 @@ public class Engine {
 
                 professionsNameSpaces.add(nsKey.asString());
 
+                amount++;
                 professions.add(new ProfessionModel(
                         name,
                         Config.getInt(PROFESSION_SECTION + "." + key + ".slot"),
@@ -217,5 +244,30 @@ public class Engine {
                 plugin.getLogger().warning(message);
             }
         }
+
+        plugin.getLogger().log(Level.INFO, Config.getMessage("loading.profession").replace("%value%", String.valueOf(amount)));
+    }
+
+    /**
+     * Прогрузка групп профессий
+     */
+    private void loadProfessionGroups(){
+
+    }
+
+    /**
+     * Получить список профессий игрока
+     * @param player игрок
+     * @return список спрофессий
+     */
+    private List<ProfessionModel> getPlayerProfessions(Player player){
+        List<ProfessionModel> playerProfessions = new ArrayList<>();
+
+        for(ProfessionModel model: professions){
+            if(player.hasPermission(model.getPermission()))
+                playerProfessions.add(model);
+        }
+
+        return playerProfessions;
     }
 }

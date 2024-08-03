@@ -50,9 +50,6 @@ public class InventoryClickedListener implements Listener {
         if(event.getAction() == InventoryAction.PICKUP_HALF)
             event.setCancelled(true);
 
-
-        //System.out.println(event.getAction() + " - " + event.getClick());
-
         if(!(event.getWhoClicked() instanceof Player player))
             return;
 

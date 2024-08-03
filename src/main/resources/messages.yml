@@ -18,3 +18,12 @@ already-another-profession: "Нельзя выбрать две одинаков
 profession-no-prerms: "У вас нету прав выбрать эту профессию"
 
 cant-take-banned: "Имея профессию %prof_1% нельзя взять %prof_2%"
+
+
+
+#updated
+already-selected: "У вас уже выбрана такая профессия"
+
+loading:
+  profession: "Загружено %value% профессий"
+  groups: "Загружено %value% групп профессий"
