@@ -5,6 +5,7 @@ import me.melvuze.selectprofession.core.Config;
 import me.melvuze.selectprofession.enums.Commands;
 import me.melvuze.selectprofession.enums.Permissions;
 import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -85,6 +86,7 @@ public class SelectProfessionCommand implements TabCompleter, CommandExecutor {
 
                 String playerName = args[1];
                 Player commandPlayer = Bukkit.getPlayer(playerName);
+
                 if(commandPlayer == null){
                     sender.sendMessage(Config.getMessage("bad-command-player"));
                     return true;
@@ -93,7 +95,6 @@ public class SelectProfessionCommand implements TabCompleter, CommandExecutor {
                 try {
                     String amountString = args[2];
                     int amount = Integer.parseInt(amountString);
-
 
                     int oldCurrentAmount = commandPlayer.getPersistentDataContainer().get(plugin.getKeys().PROFESSION_POINTS_AMOUNT, PersistentDataType.INTEGER);
                     int oldMaxAmount = commandPlayer.getPersistentDataContainer().get(plugin.getKeys().PROFESSION_POINTS_MAX, PersistentDataType.INTEGER);

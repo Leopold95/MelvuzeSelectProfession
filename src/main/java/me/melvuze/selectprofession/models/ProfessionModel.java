@@ -17,7 +17,7 @@ public class ProfessionModel {
     private String command;
     private String permission;
     private String material;
-    private NamespacedKey key;
+    //private NamespacedKey key;
     private String configId;
     private List<String> lore;
     private List<String> banned;

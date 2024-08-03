@@ -64,7 +64,7 @@ public class ButtonFormats {
             ItemMeta meta = item.getItemMeta();
 
             meta.displayName(Component.text(profession.getName()));
-            meta.getPersistentDataContainer().set(profession.getKey(), PersistentDataType.INTEGER, 1);
+            //meta.getPersistentDataContainer().set(profession.getKey(), PersistentDataType.INTEGER, 1);
             meta.getPersistentDataContainer().set(plugin.getKeys().PROFESSION_ITEM_KEY, PersistentDataType.STRING, profession.getConfigId());
             meta.setLore(profession.getLore());
             meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);

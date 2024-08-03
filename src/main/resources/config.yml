@@ -22,7 +22,7 @@ professions:
     name: "&cВоин"
     slot: 19
     command: "" #%player%
-    permission: "test.permission.warrior"
+    permission: "profession.warrior"
     material: IRON_AXE
     cost: 3
     banned:
@@ -34,7 +34,7 @@ professions:
     name: "&cЛучник"
     slot: 28
     command: "" #%player%
-    permission: "test.permission.bow_master"
+    permission: "profession.bow_master"
     material: BOW
     cost: 3
     banned:
@@ -46,7 +46,7 @@ professions:
     name: "&cМедсестра"
     slot: 21
     command: "" #%player%
-    permission: "test.healer"
+    permission: "profession.healer"
     material: POISONOUS_POTATO
     cost: 3
     banned:
@@ -59,7 +59,7 @@ professions:
     cost: 2
     slot: 30
     command: ""
-    permission: "test.permission.farmer"
+    permission: "profession.farmer"
     material: IRON_HOE
     lore:
       - line 1
@@ -69,7 +69,7 @@ professions:
     cost: 2
     slot: 23
     command: ""
-    permission: "test.permission.remeslennik"
+    permission: "profession.remeslennik"
     material: STONE_PICKAXE
     lore:
       - line 1
@@ -79,7 +79,7 @@ professions:
     cost: 0
     slot: 32
     command: ""
-    permission: "test.permission.kuznec"
+    permission: "profession.kuznec"
     material: DIAMOND_PICKAXE
     lore:
       - line 1

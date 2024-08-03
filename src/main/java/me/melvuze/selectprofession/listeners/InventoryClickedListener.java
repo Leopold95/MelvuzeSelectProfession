@@ -61,9 +61,6 @@ public class InventoryClickedListener implements Listener {
         if(event.getSlot() != event.getRawSlot())
             return;
 
-        if(event.getAction() == InventoryAction.MOVE_TO_OTHER_INVENTORY && event.getClick() == ClickType.SHIFT_LEFT)
-            event.setCancelled(true);
-
         //блокировка действий при нажатии на кнопки интерфнйса
         if(plugin.getEngine().getBannedSlots().contains(event.getSlot()))
             event.setCancelled(true);

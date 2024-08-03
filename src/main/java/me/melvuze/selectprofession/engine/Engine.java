@@ -18,10 +18,12 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.logging.Level;
 
@@ -32,8 +34,8 @@ public class Engine {
     private List<ProfessionModel> professions;
     @Getter
     private List<Integer> bannedSlots;
-    @Getter
-    private List<String> professionsNameSpaces;
+    //@Getter
+    //private List<String> professionsNameSpaces;
     @Getter
     private List<List<ProfessionModel>> groups;
 
@@ -45,7 +47,7 @@ public class Engine {
         this.plugin = plugin;
 
         bannedSlots = new ArrayList<>();
-        professionsNameSpaces = new ArrayList<>();
+        //professionsNameSpaces = new ArrayList<>();
 
         loadProfessions();
         loadProfessionGroups();
@@ -70,6 +72,7 @@ public class Engine {
 
         for(ProfessionModel model: playerProfessions){
             if(player.hasPermission(model.getPermission())){
+
                 plugin.getApi().getUserManager().modifyUser(player.getUniqueId(), user -> {
                     user.data().remove(Node.builder(model.getPermission()).build());
                     plugin.getApi().getUserManager().saveUser(user);
@@ -79,6 +82,8 @@ public class Engine {
             }
         }
 
+
+
         int lostPoints = player.getPersistentDataContainer().get(plugin.getKeys().PROFESSION_POINTS_AMOUNT, PersistentDataType.INTEGER);
         int newPoints = returnCost + lostPoints;
 
@@ -86,6 +91,20 @@ public class Engine {
         player.sendMessage(Config.getMessage("professions-resetted"));
         sender.sendMessage(Config.getMessage("professions-resetted-to").replace("%player%", player.getName()));
     }
+
+//    public void addPoints(PersistentDataContainer pdc){
+//        String amountString = args[2];
+//        int amount = Integer.parseInt(amountString);
+//
+//        int oldCurrentAmount = commandPlayer.getPersistentDataContainer().get(plugin.getKeys().PROFESSION_POINTS_AMOUNT, PersistentDataType.INTEGER);
+//        int oldMaxAmount = commandPlayer.getPersistentDataContainer().get(plugin.getKeys().PROFESSION_POINTS_MAX, PersistentDataType.INTEGER);
+//
+//        int newCurrentAmount = oldCurrentAmount + amount;
+//        commandPlayer.getPersistentDataContainer().set(plugin.getKeys().PROFESSION_POINTS_AMOUNT, PersistentDataType.INTEGER, newCurrentAmount);
+//
+//        int newMaxAmount = oldMaxAmount + amount;
+//        commandPlayer.getPersistentDataContainer().set(plugin.getKeys().PROFESSION_POINTS_MAX, PersistentDataType.INTEGER, newMaxAmount);
+//    }
 
     /**
      * Клик на проффесию в меню
@@ -112,7 +131,23 @@ public class Engine {
             return;
         }
 
-        player.sendMessage(clickedProfession.getConfigId());
+        int currentPoints = player.getPersistentDataContainer().get(plugin.getKeys().PROFESSION_POINTS_AMOUNT, PersistentDataType.INTEGER);
+        currentPoints -= clickedProfession.getCost();
+        player.getPersistentDataContainer().set(plugin.getKeys().PROFESSION_POINTS_AMOUNT, PersistentDataType.INTEGER, currentPoints);
+
+        plugin.getApi().getUserManager().modifyUser(player.getUniqueId(), user -> {
+            user.data().add(Node.builder(clickedProfession.getPermission()).build());
+            plugin.getApi().getUserManager().saveUser(user);
+        });
+
+        if(clickedProfession.getCommand() != null  && clickedProfession.getCommand().isEmpty() )
+            Bukkit.dispatchCommand(plugin.getServer().getConsoleSender(), clickedProfession.getCommand().replace("%player%", player.getName()));
+
+        player.sendMessage(Component.text(Config.getMessage("get-first-profession").replace("%name%", clickedProfession.getName())));
+
+        openGui(player);
+
+        //player.sendMessage(clickedProfession.getConfigId());
     }
 
     private boolean isPlayerHasPoints(Player player, ProfessionModel clickedProfession) {
@@ -120,114 +155,106 @@ public class Engine {
         return (avaliable - clickedProfession.getCost()) >= 0;
     }
 
-    /**
-     * Клик на проффесиию в меню
-     * @param player кликнувший игрок
-     * @param slot слот
-     * @param inv инвентарь
-     * @param key ключ
-     * @param type тип
-     */
     @Deprecated
-    public void onSomeProfessionClicked(Player player, int slot, Inventory inv, String key, String type){
-        Optional<ProfessionModel> professionOpt = plugin.getEngine().getProfessions().stream()
-                .filter(p -> p.getKey().asString().equals(key))
-                .findFirst();
+//    public void onSomeProfessionClicked(Player player, int slot, Inventory inv, String key, String type){
+//        Optional<ProfessionModel> professionOpt = plugin.getEngine().getProfessions().stream()
+//                .filter(p -> p.getKey().asString().equals(key))
+//                .findFirst();
+//
+//        if (professionOpt.isEmpty())
+//            return;
+//
+//        ProfessionModel clickedProfession = professionOpt.get();
+//
+//        if(!player.hasPermission(clickedProfession.getPermission())){
+//            player.sendMessage(Config.getMessage("profession-no-prerms"));
+//            return;
+//        }
+//
+//        if(type.equals("1")){
+//            String current = player.getPersistentDataContainer().get(plugin.getKeys().PROFESSION_FIRST, PersistentDataType.STRING);
+//            if(current != null && current.equals(clickedProfession.getKey().asString())){
+//                player.sendMessage(Config.getMessage("already-same-profession-first"));
+//                return;
+//            }
+//
+//            Optional<ProfessionModel> currentProfession = getByStringNameSpace(current);
+//
+//            String second = player.getPersistentDataContainer().get(plugin.getKeys().PROFESSION_SECOND, PersistentDataType.STRING);
+//            if(second != null && second.equals(clickedProfession.getKey().asString())){
+//                player.sendMessage(Config.getMessage("already-another-profession"));
+//                return;
+//            } else if (second != null && current != null) {
+//                if(currentProfession.isPresent() && currentProfession.get().getBanned().contains(clickedProfession.getKey().asString())){
+//                    String currentName = player.getPersistentDataContainer().get(plugin.getKeys().PROFESSION_FIRST_NAME, PersistentDataType.STRING);
+//
+//                    player.sendMessage(Config.getMessage("cant-take-banned")
+//                            .replace("%prof_1%", currentName)
+//                            .replace("%prof_2%", clickedProfession.getName())
+//                    );
+//                    return;
+//                }
+//            }
+//
+//            currentProfession.ifPresent(professionModel -> plugin.getApi().getUserManager().modifyUser(player.getUniqueId(), user -> {
+//                user.data().remove(Node.builder(professionModel.getPermission()).build());
+//                user.data().add(Node.builder(clickedProfession.getPermission()).build());
+//                plugin.getApi().getUserManager().saveUser(user);
+//            }));
+//
+//            player.getPersistentDataContainer().set(plugin.getKeys().PROFESSION_FIRST, PersistentDataType.STRING, key);
+//            player.getPersistentDataContainer().set(plugin.getKeys().PROFESSION_FIRST_NAME, PersistentDataType.STRING, clickedProfession.getName());
+//            player.sendMessage(Component.text(Config.getMessage("get-first-profession").replace("%name%", clickedProfession.getName())));
+//            Bukkit.dispatchCommand(plugin.getServer().getConsoleSender(), clickedProfession.getCommand().replace("%player%", player.getName()));
+//            buttonFormats.formatStatus(player, inv);
+//        }
+//        else {
+//            String current = player.getPersistentDataContainer().get(plugin.getKeys().PROFESSION_SECOND, PersistentDataType.STRING);
+//            if(current != null && current.equals(clickedProfession.getKey().asString())){
+//                player.sendMessage(Config.getMessage("already-same-profession-second"));
+//                return;
+//            }
+//
+//            Optional<ProfessionModel> currentProfession = getByStringNameSpace(current);
+//
+//            String first = player.getPersistentDataContainer().get(plugin.getKeys().PROFESSION_FIRST, PersistentDataType.STRING);
+//            if(first != null && first.equals(clickedProfession.getKey().asString())){
+//                player.sendMessage(Config.getMessage("already-another-profession"));
+//                return;
+//            } else if (first != null && current != null) {
+//                if(currentProfession.isPresent() && currentProfession.get().getBanned().contains(clickedProfession.getKey().asString())){
+//                    String currentName = player.getPersistentDataContainer().get(plugin.getKeys().PROFESSION_SECOND_NAME, PersistentDataType.STRING);
+//
+//                    player.sendMessage(Config.getMessage("cant-take-banned")
+//                            .replace("%prof_1%", currentName)
+//                            .replace("%prof_2%", clickedProfession.getName())
+//                    );
+//                    return;
+//                }
+//            }
+//
+//            currentProfession.ifPresent(professionModel -> plugin.getApi().getUserManager().modifyUser(player.getUniqueId(), user -> {
+//                user.data().remove(Node.builder(professionModel.getPermission()).build());
+//                user.data().add(Node.builder(clickedProfession.getPermission()).build());
+//                plugin.getApi().getUserManager().saveUser(user);
+//            }));
+//
+//            player.getPersistentDataContainer().set(plugin.getKeys().PROFESSION_SECOND, PersistentDataType.STRING, key);
+//            player.getPersistentDataContainer().set(plugin.getKeys().PROFESSION_SECOND_NAME, PersistentDataType.STRING, clickedProfession.getName());
+//            player.sendMessage(Component.text(Config.getMessage("get-second-profession").replace("%name%", clickedProfession.getName())));
+//            Bukkit.dispatchCommand(plugin.getServer().getConsoleSender(), clickedProfession.getCommand().replace("%player%", player.getName()));
+//            buttonFormats.formatStatus(player, inv);
+//        }
+//    }
 
-        if (professionOpt.isEmpty())
-            return;
-
-        ProfessionModel clickedProfession = professionOpt.get();
-
-        if(!player.hasPermission(clickedProfession.getPermission())){
-            player.sendMessage(Config.getMessage("profession-no-prerms"));
-            return;
-        }
-
-        if(type.equals("1")){
-            String current = player.getPersistentDataContainer().get(plugin.getKeys().PROFESSION_FIRST, PersistentDataType.STRING);
-            if(current != null && current.equals(clickedProfession.getKey().asString())){
-                player.sendMessage(Config.getMessage("already-same-profession-first"));
-                return;
-            }
-
-            Optional<ProfessionModel> currentProfession = getByStringNameSpace(current);
-
-            String second = player.getPersistentDataContainer().get(plugin.getKeys().PROFESSION_SECOND, PersistentDataType.STRING);
-            if(second != null && second.equals(clickedProfession.getKey().asString())){
-                player.sendMessage(Config.getMessage("already-another-profession"));
-                return;
-            } else if (second != null && current != null) {
-                if(currentProfession.isPresent() && currentProfession.get().getBanned().contains(clickedProfession.getKey().asString())){
-                    String currentName = player.getPersistentDataContainer().get(plugin.getKeys().PROFESSION_FIRST_NAME, PersistentDataType.STRING);
-
-                    player.sendMessage(Config.getMessage("cant-take-banned")
-                            .replace("%prof_1%", currentName)
-                            .replace("%prof_2%", clickedProfession.getName())
-                    );
-                    return;
-                }
-            }
-
-            currentProfession.ifPresent(professionModel -> plugin.getApi().getUserManager().modifyUser(player.getUniqueId(), user -> {
-                user.data().remove(Node.builder(professionModel.getPermission()).build());
-                user.data().add(Node.builder(clickedProfession.getPermission()).build());
-                plugin.getApi().getUserManager().saveUser(user);
-            }));
-
-            player.getPersistentDataContainer().set(plugin.getKeys().PROFESSION_FIRST, PersistentDataType.STRING, key);
-            player.getPersistentDataContainer().set(plugin.getKeys().PROFESSION_FIRST_NAME, PersistentDataType.STRING, clickedProfession.getName());
-            player.sendMessage(Component.text(Config.getMessage("get-first-profession").replace("%name%", clickedProfession.getName())));
-            Bukkit.dispatchCommand(plugin.getServer().getConsoleSender(), clickedProfession.getCommand().replace("%player%", player.getName()));
-            buttonFormats.formatStatus(player, inv);
-        }
-        else {
-            String current = player.getPersistentDataContainer().get(plugin.getKeys().PROFESSION_SECOND, PersistentDataType.STRING);
-            if(current != null && current.equals(clickedProfession.getKey().asString())){
-                player.sendMessage(Config.getMessage("already-same-profession-second"));
-                return;
-            }
-
-            Optional<ProfessionModel> currentProfession = getByStringNameSpace(current);
-
-            String first = player.getPersistentDataContainer().get(plugin.getKeys().PROFESSION_FIRST, PersistentDataType.STRING);
-            if(first != null && first.equals(clickedProfession.getKey().asString())){
-                player.sendMessage(Config.getMessage("already-another-profession"));
-                return;
-            } else if (first != null && current != null) {
-                if(currentProfession.isPresent() && currentProfession.get().getBanned().contains(clickedProfession.getKey().asString())){
-                    String currentName = player.getPersistentDataContainer().get(plugin.getKeys().PROFESSION_SECOND_NAME, PersistentDataType.STRING);
-
-                    player.sendMessage(Config.getMessage("cant-take-banned")
-                            .replace("%prof_1%", currentName)
-                            .replace("%prof_2%", clickedProfession.getName())
-                    );
-                    return;
-                }
-            }
-
-            currentProfession.ifPresent(professionModel -> plugin.getApi().getUserManager().modifyUser(player.getUniqueId(), user -> {
-                user.data().remove(Node.builder(professionModel.getPermission()).build());
-                user.data().add(Node.builder(clickedProfession.getPermission()).build());
-                plugin.getApi().getUserManager().saveUser(user);
-            }));
-
-            player.getPersistentDataContainer().set(plugin.getKeys().PROFESSION_SECOND, PersistentDataType.STRING, key);
-            player.getPersistentDataContainer().set(plugin.getKeys().PROFESSION_SECOND_NAME, PersistentDataType.STRING, clickedProfession.getName());
-            player.sendMessage(Component.text(Config.getMessage("get-second-profession").replace("%name%", clickedProfession.getName())));
-            Bukkit.dispatchCommand(plugin.getServer().getConsoleSender(), clickedProfession.getCommand().replace("%player%", player.getName()));
-            buttonFormats.formatStatus(player, inv);
-        }
-    }
-
-    /**
-     * Найти проффесию по строковому ключу
-     * @param key ключ
-     * @return профессия
-     */
-    public Optional<ProfessionModel> getByStringNameSpace(String key){
-        return professions.stream().filter(p -> p.getKey().asString().equals(key)).findFirst();
-    }
+//    /**
+//     * Найти проффесию по строковому ключу
+//     * @param key ключ
+//     * @return профессия
+//     */
+//    public Optional<ProfessionModel> getByStringNameSpace(String key){
+//        return professions.stream().filter(p -> p.getKey().asString().equals(key)).findFirst();
+//    }
 
     /**
      * Найди модель по правам
@@ -278,7 +305,7 @@ public class Engine {
                 Material.valueOf(Config.getString(PROFESSION_SECTION + "." + key + ".material"));
 
                 String name = Config.getString(PROFESSION_SECTION + "." + key + ".name");
-                NamespacedKey nsKey = new NamespacedKey(plugin,  "PROFESSION-" + key);
+                //NamespacedKey nsKey = new NamespacedKey(plugin,  "PROFESSION-" + key);
 
                 ArrayList<String> banned = new ArrayList<>();
                 List<String> bannedListConfig = Config.getStringList(PROFESSION_SECTION + "." + key + ".banned");
@@ -289,7 +316,7 @@ public class Engine {
                     }
                 }
 
-                professionsNameSpaces.add(nsKey.asString());
+                //professionsNameSpaces.add(nsKey.asString());
 
                 amount++;
                 professions.add(new ProfessionModel(
@@ -299,7 +326,6 @@ public class Engine {
                         Config.getString(PROFESSION_SECTION + "." + key + ".command"),
                         Config.getString(PROFESSION_SECTION + "." + key + ".permission"),
                         Config.getString(PROFESSION_SECTION + "." + key + ".material"),
-                        nsKey,
                         key,
                         Config.getStringList(PROFESSION_SECTION + "." + key + ".lore"),
                         banned
@@ -364,20 +390,51 @@ public class Engine {
     /**
      * Проверка что было открыта предыдущая профессия
      * @param player игрок
-     * @param profession профессия
+     * @param clickedProfession профессия
      * @return ДА \ НЕТ
      */
-    private boolean isPreviousProfessionUnlocked(Player player, ProfessionModel profession){
-//        List<ProfessionModel> firstProfessions = new ArrayList<>();
+    private boolean isPreviousProfessionUnlocked(Player player, ProfessionModel clickedProfession){
+        List<ProfessionModel> firstProfessions = new ArrayList<>();
+//        List<ProfessionModel> playerProfessions = getPlayerProfessions(player);
 //
-//        for(List<ProfessionModel> group: groups){
-//            Optional<ProfessionModel> model = group.stream().findFirst();
-//            model.ifPresent(firstProfessions::add);
-//        }
-//
-//        return firstProfessions.stream().anyMatch(pm -> player.hasPermission(pm.getPermission()));
+        for(List<ProfessionModel> group: groups){
+            Optional<ProfessionModel> model = group.stream().findFirst();
+            model.ifPresent(firstProfessions::add);
+        }
 
-        return true;
+        if(firstProfessions.contains(clickedProfession))
+            return true;
+
+        List<ProfessionModel> group = getProfessionGroup(clickedProfession);
+        if(group == null){
+            plugin.getLogger().warning("77--11");
+            return false;
+        }
+
+        int index = group.indexOf(clickedProfession);
+        System.out.println(index);
+
+        try {
+            ProfessionModel nextStage = group.get(index - 1);
+            if(player.hasPermission(nextStage.getPermission()))
+                return true;
+        }
+        catch (Exception ignored){
+            plugin.getLogger().warning("77--12");
+        }
+
+        //List<List<ProfessionModel>> playerOpenedGroups = getPlayerOpenGroups(player);
+        //player.sendMessage(playerOpenedGroups.toString());
+
+        return false;
+    }
+
+    private List<ProfessionModel> getProfessionGroup(ProfessionModel model){
+        for(List<ProfessionModel> group: groups){
+            if(group.contains(model))
+                return group;
+        }
+        return null;
     }
 
     private List<List<ProfessionModel>> getPlayerOpenGroups(Player player){
