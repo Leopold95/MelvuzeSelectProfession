@@ -8,12 +8,15 @@ import net.kyori.adventure.text.TextComponent;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataType;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class ButtonFormats {
@@ -64,14 +67,18 @@ public class ButtonFormats {
             meta.getPersistentDataContainer().set(profession.getKey(), PersistentDataType.INTEGER, 1);
             meta.getPersistentDataContainer().set(plugin.getKeys().PROFESSION_ITEM_KEY, PersistentDataType.STRING, profession.getConfigId());
             meta.setLore(profession.getLore());
+            meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
 
             item.setItemMeta(meta);
+
+            if(player.hasPermission(profession.getPermission()))
+                setGlowing(item);
+
             inv.setItem(profession.getSlot(), item);
             engine.getBannedSlots().add(profession.getSlot());
         }
     }
 
-    @Deprecated
     public void formatStatus(Player player, Inventory inv){
         int statusSlot = Config.getDesignConfig().getInt("status.slot");
         String statusMaterial= Config.getDesignConfig().getString("status.material");
@@ -83,37 +90,27 @@ public class ButtonFormats {
             ItemStack item = new ItemStack(mat);
             ItemMeta meta = item.getItemMeta();
 
-            String firstProfession = player.getPersistentDataContainer().get(plugin.getKeys().PROFESSION_FIRST_NAME, PersistentDataType.STRING);
-            String secondProfession = player.getPersistentDataContainer().get(plugin.getKeys().PROFESSION_SECOND_NAME, PersistentDataType.STRING);
-
-            if(firstProfession == null)
-                firstProfession = Config.getMessage("profession-not-selected");
-
-            if(secondProfession == null)
-                secondProfession = Config.getMessage("profession-not-selected");
-
-            String finalFirstProfession = firstProfession;
-            String finalSecondProfession = secondProfession;
-            List<TextComponent> newLove =  Config.getDesignConfig().getStringList("status.lore")
-                    .stream()
-                    .map(line -> ChatColor.translateAlternateColorCodes('&',
-                            line.replace("%first%", finalFirstProfession).replace("%second%", finalSecondProfession)
-                    ))
-//                .map(line -> line.replace("%first%", finalFirstProfession))
-//                .map(line -> line.replace("%second%", finalSecondProfession))
-//                .map(line -> ChatColor.translateAlternateColorCodes('&', line))
-                    .map(Component::text)
-                    .toList();
-
             meta.displayName(Component.text(statusName));
-            meta.lore(newLove);
+
+            List<TextComponent> lore = new ArrayList<>();
+            for (String defaultLoreLine: Config.getDesignConfig().getStringList("status.lore")){
+                lore.add(Component.text(defaultLoreLine));
+            }
+
+            for(ProfessionModel model: engine.getPlayerProfessions(player)){
+                String profLoreLine = Config.getDesignConfig().getString("status.lore-profession")
+                        .replace("%prof_name%", model.getName());
+                lore.add(Component.text(profLoreLine));
+            }
+
+            meta.lore(lore);
 
             item.setItemMeta(meta);
             inv.setItem(statusSlot, item);
         }
         catch (Exception exception){
             String message = Config.getMessage("error-wile-loading-status")
-                    .replace("%exp%", exception.getMessage());
+                    .replace("%msg%", exception.getMessage());
             plugin.getLogger().warning(message);
         }
     }
@@ -148,5 +145,12 @@ public class ButtonFormats {
                     .replace("%msg%", exp.getMessage());
             plugin.getLogger().warning(message);
         }
+    }
+
+    private void setGlowing(ItemStack item){
+        ItemMeta meta = item.getItemMeta();
+        meta.addEnchant(Enchantment.DAMAGE_ALL, 1, false);
+        meta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
+        item.setItemMeta(meta);
     }
 }

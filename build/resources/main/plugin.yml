@@ -20,3 +20,9 @@ permissions:
   selectprofession.open:
     default: true
     description: Дает возможность открыть меню профессий
+  selectprofession.reset:
+    default: op
+    description: Обнуляет все профессии
+  selectprofession.addpoint:
+    default: op
+    description: Обнуляет все профессии

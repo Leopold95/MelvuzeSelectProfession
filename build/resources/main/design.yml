@@ -1,12 +1,12 @@
 menu-name: "Выберите проффесию"
 
 status:
-  slot: 19
+  slot: 52
   material: DIRT
   name: STATUS
+  lore-profession: "- %prof_name%"
   lore:
-    - "first: %first%"
-    - "&csecond: %second%"
+    - "Ваши профессии: "
 
 points:
   slot: 53

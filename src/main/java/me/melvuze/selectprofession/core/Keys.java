@@ -16,6 +16,7 @@ public class Keys {
     public NamespacedKey PROFESSION_SECOND_NAME;
 
     public NamespacedKey PROFESSION_POINTS_AMOUNT;
+    public NamespacedKey PROFESSION_POINTS_MAX;
     public NamespacedKey PROFESSION_LIST;
     public NamespacedKey PROFESSION_ITEM_KEY;
 
@@ -32,6 +33,7 @@ public class Keys {
         PROFESSION_SECOND_NAME = new NamespacedKey(plugin, "PROFESSION_SECOND_NAME");
 
         PROFESSION_POINTS_AMOUNT = new NamespacedKey(plugin, "PROFESSION_POINTS_AMOUNT");
+        PROFESSION_POINTS_MAX = new NamespacedKey(plugin, "PROFESSION_POINTS_MAX");
         PROFESSION_LIST = new NamespacedKey(plugin, "PROFESSION_LIST");
         PROFESSION_ITEM_KEY = new NamespacedKey(plugin, "PROFESSION_ITEM_KEY");
     }

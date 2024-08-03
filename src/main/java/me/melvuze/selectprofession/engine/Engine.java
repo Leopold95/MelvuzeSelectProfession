@@ -10,9 +10,14 @@ import net.luckperms.api.node.Node;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
+import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.ItemFlag;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataType;
 
 import java.util.ArrayList;
@@ -53,9 +58,33 @@ public class Engine {
 
         buttonFormats.formatButtons(player, inv);
         buttonFormats.formatPoints(player, inv);
+        buttonFormats.formatStatus(player, inv);
         buttonFormats.formatDesign(inv);
 
         player.openInventory(inv);
+    }
+
+    public void resetProfessions(CommandSender sender, Player player){
+        int returnCost = 0;
+        List<ProfessionModel> playerProfessions = getPlayerProfessions(player);
+
+        for(ProfessionModel model: playerProfessions){
+            if(player.hasPermission(model.getPermission())){
+                plugin.getApi().getUserManager().modifyUser(player.getUniqueId(), user -> {
+                    user.data().remove(Node.builder(model.getPermission()).build());
+                    plugin.getApi().getUserManager().saveUser(user);
+                });
+
+                returnCost += model.getCost();
+            }
+        }
+
+        int lostPoints = player.getPersistentDataContainer().get(plugin.getKeys().PROFESSION_POINTS_AMOUNT, PersistentDataType.INTEGER);
+        int newPoints = returnCost + lostPoints;
+
+        player.getPersistentDataContainer().set(plugin.getKeys().PROFESSION_POINTS_AMOUNT, PersistentDataType.INTEGER, newPoints);
+        player.sendMessage(Config.getMessage("professions-resetted"));
+        sender.sendMessage(Config.getMessage("professions-resetted-to").replace("%player%", player.getName()));
     }
 
     /**
@@ -77,14 +106,18 @@ public class Engine {
             return;
         }
 
-        boolean isEnounghPoints = true;
+        boolean isEnounghPoints = isPlayerHasPoints(player, clickedProfession);
         if(!isEnounghPoints){
             player.sendMessage(Config.getMessage("not-enough-points"));
             return;
         }
 
         player.sendMessage(clickedProfession.getConfigId());
+    }
 
+    private boolean isPlayerHasPoints(Player player, ProfessionModel clickedProfession) {
+        int avaliable = player.getPersistentDataContainer().get(plugin.getKeys().PROFESSION_POINTS_AMOUNT, PersistentDataType.INTEGER);
+        return (avaliable - clickedProfession.getCost()) >= 0;
     }
 
     /**
@@ -370,7 +403,7 @@ public class Engine {
      * @param player игрок
      * @return список спрофессий
      */
-    private List<ProfessionModel> getPlayerProfessions(Player player){
+    public List<ProfessionModel> getPlayerProfessions(Player player){
         List<ProfessionModel> playerProfessions = new ArrayList<>();
 
         for(ProfessionModel model: professions){

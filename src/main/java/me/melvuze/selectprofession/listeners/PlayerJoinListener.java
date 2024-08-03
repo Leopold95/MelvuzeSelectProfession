@@ -28,5 +28,8 @@ public class PlayerJoinListener implements Listener {
 
         if(!pdc.has(plugin.getKeys().PROFESSION_POINTS_AMOUNT))
             pdc.set(plugin.getKeys().PROFESSION_POINTS_AMOUNT, PersistentDataType.INTEGER, Config.getInt("default-prof-points"));
+
+        if(!pdc.has(plugin.getKeys().PROFESSION_POINTS_MAX))
+            pdc.set(plugin.getKeys().PROFESSION_POINTS_MAX, PersistentDataType.INTEGER, Config.getInt("default-prof-points"));
     }
 }
