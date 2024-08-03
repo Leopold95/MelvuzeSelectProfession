@@ -1,15 +1,42 @@
 #max-professions: 2
 #menu-name: "Выберите проффесию"
 
+default-prof-points: 5
+show-groups-after-loading: true
+show-professions-after-loading: true
 
+
+groups:
+  1:
+    - warrior
+    - bow-master
+  2:
+    - healer
+    - farmer
+  3:
+    - remeslennik
+    - kuznec
 
 professions:
   warrior:
     name: "&cВоин"
-    slot: 12
-    command: "say some one got warrior"
+    slot: 19
+    command: "" #%player%
     permission: "test.permission.warrior"
-    material: DIRT
+    material: IRON_AXE
+    cost: 3
+    banned:
+      - healer
+    lore:
+      - "&cline 1"
+      - line 2
+  bow-master:
+    name: "&cЛучник"
+    slot: 28
+    command: "" #%player%
+    permission: "test.permission.bow_master"
+    material: BOW
+    cost: 3
     banned:
       - healer
     lore:
@@ -17,10 +44,11 @@ professions:
       - line 2
   healer:
     name: "&cМедсестра"
-    slot: 13
-    command: "say %player% some one got medichka"
+    slot: 21
+    command: "" #%player%
     permission: "test.healer"
-    material: DIRT
+    material: POISONOUS_POTATO
+    cost: 3
     banned:
       - farmer
     lore:
@@ -28,10 +56,31 @@ professions:
       - line 2
   farmer:
     name: Фермер
-    slot: 14
-    command: "say some one got farmer"
+    cost: 2
+    slot: 30
+    command: ""
     permission: "test.permission.farmer"
-    material: DIRT
+    material: IRON_HOE
+    lore:
+      - line 1
+      - line 2
+  remeslennik:
+    name: Ремесленник
+    cost: 2
+    slot: 23
+    command: ""
+    permission: "test.permission.remeslennik"
+    material: STONE_PICKAXE
+    lore:
+      - line 1
+      - line 2
+  kuznec:
+    name: Кузнец
+    cost: 0
+    slot: 32
+    command: ""
+    permission: "test.permission.kuznec"
+    material: DIAMOND_PICKAXE
     lore:
       - line 1
       - line 2

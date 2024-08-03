@@ -13,6 +13,7 @@ import org.bukkit.event.inventory.InventoryAction;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryDragEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.persistence.PersistentDataType;
 
 import javax.swing.*;
 import java.util.List;
@@ -68,27 +69,43 @@ public class InventoryClickedListener implements Listener {
             event.setCancelled(true);
 
         ItemStack button = event.getCurrentItem();
-        Set<NamespacedKey> keys = button.getItemMeta().getPersistentDataContainer().getKeys();
 
-        String possibleKey = null;
+        if(!button.getItemMeta().getPersistentDataContainer().has(plugin.getKeys().PROFESSION_ITEM_KEY))
+            return;
 
-        l1: for(String keyStr: plugin.getEngine().getProfessionsNameSpaces()){
-            //System.out.println("my: " + keyStr);
+        String clickedProfessionConfigId = button.getItemMeta().getPersistentDataContainer().get(plugin.getKeys().PROFESSION_ITEM_KEY, PersistentDataType.STRING);
+        ProfessionModel clickedProfession = plugin.getEngine().getByConfigId(clickedProfessionConfigId);
 
-            l2: for(NamespacedKey key: keys){
-                //System.out.println("item: " + key.asString());
-                if(key.asString().equals(keyStr)){
-                    possibleKey = keyStr;
-                     break l1;
-                }
-            }
-        }
+        if(clickedProfession == null)
+            return;
 
-        if(possibleKey != null){
-            if(event.getClick().isLeftClick())
-                plugin.getEngine().onSomeProfessionClicked(player, event.getSlot(), event.getInventory(), possibleKey, "1");
-            if(event.getClick().isRightClick())
-                plugin.getEngine().onSomeProfessionClicked(player, event.getSlot(), event.getInventory(), possibleKey, "2");
-        }
+        plugin.getEngine().onProfessionClicked(player, event.getInventory(), clickedProfession);
+
+//        //TODO remove this shit
+//        Set<NamespacedKey> keys = button.getItemMeta().getPersistentDataContainer().getKeys();
+//        String possibleKey = null;
+//        l1: for(String keyStr: plugin.getEngine().getProfessionsNameSpaces()){
+//            //System.out.println("my: " + keyStr);
+//
+//            l2: for(NamespacedKey key: keys){
+//                //System.out.println("item: " + key.asString());
+//                if(key.asString().equals(keyStr)){
+//                    possibleKey = keyStr;
+//                     break l1;
+//                }
+//            }
+//        }
+
+//        if(possibleKey == null)
+//            return;
+//
+//        plugin.getEngine().get
+
+//        if(possibleKey != null){
+//            if(event.getClick().isLeftClick())
+//                plugin.getEngine().onSomeProfessionClicked(player, event.getSlot(), event.getInventory(), possibleKey, "1");
+//            if(event.getClick().isRightClick())
+//                plugin.getEngine().onSomeProfessionClicked(player, event.getSlot(), event.getInventory(), possibleKey, "2");
+//        }
     }
 }

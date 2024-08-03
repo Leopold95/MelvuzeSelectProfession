@@ -9,7 +9,7 @@ status:
     - "&csecond: %second%"
 
 points:
-  slot: 18
+  slot: 53
   material: DIRT
   name: points
   lore:

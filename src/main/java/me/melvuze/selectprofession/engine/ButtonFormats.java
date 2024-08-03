@@ -56,14 +56,13 @@ public class ButtonFormats {
     }
 
     public void formatButtons(Player player, Inventory inv){
-        formatStatus(player, inv);
-
         for(ProfessionModel profession: engine.getProfessions()){
             ItemStack item = new ItemStack(Material.valueOf(profession.getMaterial()));
             ItemMeta meta = item.getItemMeta();
 
             meta.displayName(Component.text(profession.getName()));
             meta.getPersistentDataContainer().set(profession.getKey(), PersistentDataType.INTEGER, 1);
+            meta.getPersistentDataContainer().set(plugin.getKeys().PROFESSION_ITEM_KEY, PersistentDataType.STRING, profession.getConfigId());
             meta.setLore(profession.getLore());
 
             item.setItemMeta(meta);
@@ -72,6 +71,7 @@ public class ButtonFormats {
         }
     }
 
+    @Deprecated
     public void formatStatus(Player player, Inventory inv){
         int statusSlot = Config.getDesignConfig().getInt("status.slot");
         String statusMaterial= Config.getDesignConfig().getString("status.material");
@@ -114,6 +114,38 @@ public class ButtonFormats {
         catch (Exception exception){
             String message = Config.getMessage("error-wile-loading-status")
                     .replace("%exp%", exception.getMessage());
+            plugin.getLogger().warning(message);
+        }
+    }
+
+    public void formatPoints(Player player, Inventory inv){
+        int slot = Config.getDesignConfig().getInt("points.slot");
+        String material = Config.getDesignConfig().getString("points.material");
+        String name = Config.getDesignConfig().getString("points.name");
+
+        try {
+            ItemStack item = new ItemStack(Material.valueOf(material));
+            ItemMeta meta = item.getItemMeta();
+
+            meta.setDisplayName(name);
+
+            int avaliablePoints  = player.getPersistentDataContainer().get(plugin.getKeys().PROFESSION_POINTS_AMOUNT, PersistentDataType.INTEGER);
+
+            List<TextComponent> newLove =  Config.getDesignConfig().getStringList("points.lore")
+                .stream()
+                .map(line -> ChatColor.translateAlternateColorCodes('&',
+                        line.replace("%amount%", String.valueOf(avaliablePoints))
+                ))
+                .map(Component::text)
+                .toList();
+
+            meta.lore(newLove);
+            item.setItemMeta(meta);
+            inv.setItem(slot, item);
+        }
+        catch (Exception exp){
+            String message = Config.getMessage("error-points-formatting")
+                    .replace("%msg%", exp.getMessage());
             plugin.getLogger().warning(message);
         }
     }

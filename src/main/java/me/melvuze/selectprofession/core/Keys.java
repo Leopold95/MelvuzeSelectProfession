@@ -17,6 +17,7 @@ public class Keys {
 
     public NamespacedKey PROFESSION_POINTS_AMOUNT;
     public NamespacedKey PROFESSION_LIST;
+    public NamespacedKey PROFESSION_ITEM_KEY;
 
     public Keys(SelectProfession plugin){
         this.plugin = plugin;
@@ -32,5 +33,6 @@ public class Keys {
 
         PROFESSION_POINTS_AMOUNT = new NamespacedKey(plugin, "PROFESSION_POINTS_AMOUNT");
         PROFESSION_LIST = new NamespacedKey(plugin, "PROFESSION_LIST");
+        PROFESSION_ITEM_KEY = new NamespacedKey(plugin, "PROFESSION_ITEM_KEY");
     }
 }

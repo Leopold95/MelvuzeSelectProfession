@@ -18,3 +18,17 @@ already-another-profession: "Нельзя выбрать две одинаков
 profession-no-prerms: "У вас нету прав выбрать эту профессию"
 
 cant-take-banned: "Имея профессию %prof_1% нельзя взять %prof_2%"
+
+
+
+#updated
+already-selected: "У вас уже выбрана такая профессия"
+bad-group-section: "Секции конфигурации с группами не обнаружено. Выключение"
+bad-previous-profession: "Предыдущая профессия в этой ветке не открыта."
+bad-profession-group-id: "При загрузке групп профессий аозникла ошибка. Профессия '%prof_name%' не найдена в списке профессий."
+not-enough-points: "У вас недостаточно очков для выбора этой профессии"
+error-points-formatting: "Ошибка при форматировании кнопки очков игрока. Ошибка: '%msg%'"
+
+loading:
+  profession: "Загружено %value% профессий"
+  groups: "Загружено %value% групп профессий"
