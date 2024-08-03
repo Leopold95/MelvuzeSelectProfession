@@ -1,0 +1,22 @@
+name: MelvuzeSelectProfession
+version: '${version}'
+main: me.melvuze.selectprofession.SelectProfession
+api-version: '1.19'
+author: Leopold95
+
+depend:
+  - LuckPerms
+
+commands:
+  selectprofession:
+    description: открывает меню профессий
+    usage: /selectprofession
+    aliases:
+      - sp
+      - sprof
+      - selprof
+
+permissions:
+  selectprofession.open:
+    default: true
+    description: Дает возможность открыть меню профессий

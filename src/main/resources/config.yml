@@ -1,0 +1,37 @@
+#max-professions: 2
+#menu-name: "Выберите проффесию"
+
+
+
+professions:
+  warrior:
+    name: "&cВоин"
+    slot: 12
+    command: "say some one got warrior"
+    permission: "test.permission.warrior"
+    material: DIRT
+    banned:
+      - healer
+    lore:
+      - "&cline 1"
+      - line 2
+  healer:
+    name: "&cМедсестра"
+    slot: 13
+    command: "say %player% some one got medichka"
+    permission: "test.healer"
+    material: DIRT
+    banned:
+      - farmer
+    lore:
+      - "&cline 1"
+      - line 2
+  farmer:
+    name: Фермер
+    slot: 14
+    command: "say some one got farmer"
+    permission: "test.permission.farmer"
+    material: DIRT
+    lore:
+      - line 1
+      - line 2

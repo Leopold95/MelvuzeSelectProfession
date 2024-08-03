@@ -1,0 +1,20 @@
+bad-design-section: "Проверьте секцию с дизайном. В ней содержатьс ошибка"
+bad-design-material: "Ошибка в материалах для дизайна %exp%"
+bad-profession-permission: "Вам нелоступна это проффесия"
+bad-profession-load: "Ошибка при загрузке проффесий. Выключение"
+error-while-lading-model: "Ошибка при загрузке одной из профессий. %name%. %exp%"
+only-for-players: "Эта команда тольок для игроков"
+error-wile-loading-status: "Ошибка при инциализации кнопки статус игрока %exp%"
+
+get-first-profession: "Теперь ваша первая проффесия %name%"
+get-second-profession: "Теперь ваша вторая проффесия %name%"
+profession-not-selected: "НЕТ ПРОФЕССИИ"
+
+already-same-profession-first: "У вас и так выбрана такая первая профессия"
+already-same-profession-second: "У вас и так выбрана такая вторая профессия"
+
+already-another-profession: "Нельзя выбрать две одинаковые проффессии"
+
+profession-no-prerms: "У вас нету прав выбрать эту профессию"
+
+cant-take-banned: "Имея профессию %prof_1% нельзя взять %prof_2%"

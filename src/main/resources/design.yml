@@ -1,0 +1,27 @@
+menu-name: "Выберите проффесию"
+
+status:
+  slot: 19
+  material: DIRT
+  name: STATUS
+  lore:
+    - "first: %first%"
+    - "&csecond: %second%"
+
+points:
+  slot: 18
+  material: DIRT
+  name: points
+  lore:
+    - "Очков: %amount%"
+
+slots:
+  0: RED_STAINED_GLASS_PANE
+  1: RED_STAINED_GLASS_PANE
+  2: RED_STAINED_GLASS_PANE
+  3: RED_STAINED_GLASS_PANE
+  4: RED_STAINED_GLASS_PANE
+  5: RED_STAINED_GLASS_PANE
+  6: RED_STAINED_GLASS_PANE
+  7: RED_STAINED_GLASS_PANE
+  8: RED_STAINED_GLASS_PANE
