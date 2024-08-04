@@ -1,5 +1,5 @@
 name: MelvuzeSelectProfession
-version: '1.2'
+version: '2.0'
 main: me.melvuze.selectprofession.SelectProfession
 api-version: '1.19'
 author: Leopold95

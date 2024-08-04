@@ -1,5 +1,6 @@
 package me.melvuze.selectprofession.commands;
 
+import com.destroystokyo.paper.profile.PlayerProfile;
 import me.melvuze.selectprofession.SelectProfession;
 import me.melvuze.selectprofession.core.Config;
 import me.melvuze.selectprofession.enums.Commands;
@@ -86,6 +87,15 @@ public class SelectProfessionCommand implements TabCompleter, CommandExecutor {
 
                 String playerName = args[1];
                 Player commandPlayer = Bukkit.getPlayer(playerName);
+
+                OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(playerName);
+
+                if(offlinePlayer.hasPlayedBefore()){
+                    PlayerProfile p = offlinePlayer.getPlayerProfile();
+
+                }
+
+
 
                 if(commandPlayer == null){
                     sender.sendMessage(Config.getMessage("bad-command-player"));

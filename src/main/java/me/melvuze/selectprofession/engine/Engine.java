@@ -67,27 +67,20 @@ public class Engine {
     }
 
     public void resetProfessions(CommandSender sender, Player player){
-        int returnCost = 0;
         List<ProfessionModel> playerProfessions = getPlayerProfessions(player);
 
         for(ProfessionModel model: playerProfessions){
             if(player.hasPermission(model.getPermission())){
-
                 plugin.getApi().getUserManager().modifyUser(player.getUniqueId(), user -> {
                     user.data().remove(Node.builder(model.getPermission()).build());
                     plugin.getApi().getUserManager().saveUser(user);
                 });
-
-                returnCost += model.getCost();
             }
         }
 
+        player.getPersistentDataContainer().set(plugin.getKeys().PROFESSION_POINTS_AMOUNT, PersistentDataType.INTEGER, Config.getInt("default-prof-points"));
+        player.getPersistentDataContainer().set(plugin.getKeys().PROFESSION_POINTS_MAX, PersistentDataType.INTEGER, Config.getInt("default-prof-points"));
 
-
-        int lostPoints = player.getPersistentDataContainer().get(plugin.getKeys().PROFESSION_POINTS_AMOUNT, PersistentDataType.INTEGER);
-        int newPoints = returnCost + lostPoints;
-
-        player.getPersistentDataContainer().set(plugin.getKeys().PROFESSION_POINTS_AMOUNT, PersistentDataType.INTEGER, newPoints);
         player.sendMessage(Config.getMessage("professions-resetted"));
         sender.sendMessage(Config.getMessage("professions-resetted-to").replace("%player%", player.getName()));
     }
