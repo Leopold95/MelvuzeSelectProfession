@@ -21,66 +21,66 @@ professions:
   warrior:
     name: "&cВоин"
     slot: 19
-    command: "" #%player%
+    command: "say %player% 1" #%player%
     permission: "profession.warrior"
-    material: IRON_AXE
+    material: "IRON_AXE"
     cost: 3
     banned:
-      - healer
+      - "healer"
     lore:
       - "&cline 1"
-      - line 2
+      - "line 2"
   bow-master:
     name: "&cЛучник"
     slot: 28
-    command: "" #%player%
-    permission: "profession.bow_master"
-    material: BOW
     cost: 3
+    command: "say %player% 2" #%player%
+    permission: "profession.bow_master"
+    material: "BOW"
     banned:
-      - healer
+      - "healer"
     lore:
       - "&cline 1"
-      - line 2
+      - "line 2"
   healer:
     name: "&cМедсестра"
     slot: 21
-    command: "" #%player%
-    permission: "profession.healer"
-    material: POISONOUS_POTATO
     cost: 3
+    command: "say %player% 3" #%player%
+    permission: "profession.healer"
+    material: "POISONOUS_POTATO"
     banned:
-      - farmer
+      - "farmer"
     lore:
       - "&cline 1"
-      - line 2
+      - "line 2"
   farmer:
-    name: Фермер
+    name: "Фермер"
     cost: 2
     slot: 30
-    command: ""
+    command: "say %player% 4"
     permission: "profession.farmer"
-    material: IRON_HOE
+    material: "IRON_HOE"
     lore:
-      - line 1
-      - line 2
+      - "line 1"
+      - "line 2"
   remeslennik:
-    name: Ремесленник
+    name: "Ремесленник"
     cost: 2
     slot: 23
-    command: ""
+    command: "say %player% 5"
     permission: "profession.remeslennik"
-    material: STONE_PICKAXE
+    material: "STONE_PICKAXE"
     lore:
-      - line 1
-      - line 2
+      - "line 1"
+      - "line 2"
   kuznec:
-    name: Кузнец
+    name: "Кузнец"
     cost: 0
     slot: 32
-    command: ""
+    command: "say %player% 6"
     permission: "profession.kuznec"
-    material: DIAMOND_PICKAXE
+    material: "DIAMOND_PICKAXE"
     lore:
-      - line 1
-      - line 2
+      - "line 1"
+      - "line 2"
