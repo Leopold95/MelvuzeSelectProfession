@@ -71,6 +71,9 @@ public class Engine {
                     user.data().remove(Node.builder(model.getPermission()).build());
                     plugin.getApi().getUserManager().saveUser(user);
                 });
+
+                if(model.getRemoveCommand() != null  && !model.getRemoveCommand().isEmpty())
+                    Bukkit.dispatchCommand(plugin.getServer().getConsoleSender(), model.getRemoveCommand().replace("%player%", player.getName()));
             }
         }
 
@@ -206,15 +209,13 @@ public class Engine {
 
                 //professionsNameSpaces.add(nsKey.asString());
 
-                String command = Config.getString(PROFESSION_SECTION + "." + key + ".command");
-                plugin.getLogger().warning(command);
-
                 amount++;
                 professions.add(new ProfessionModel(
                         name,
                         Config.getInt(PROFESSION_SECTION + "." + key + ".cost"),
                         Config.getInt(PROFESSION_SECTION + "." + key + ".slot"),
-                        command,
+                        Config.getString(PROFESSION_SECTION + "." + key + ".command"),
+                        Config.getString(PROFESSION_SECTION + "." + key + ".remove-command"),
                         Config.getString(PROFESSION_SECTION + "." + key + ".permission"),
                         Config.getString(PROFESSION_SECTION + "." + key + ".material"),
                         key,

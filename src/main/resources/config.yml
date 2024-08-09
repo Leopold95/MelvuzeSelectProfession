@@ -22,6 +22,7 @@ professions:
     name: "&cВоин"
     slot: 19
     command: "say %player% 1" #%player%
+    remove-command: "say %player% 1 removed"
     permission: "profession.warrior"
     material: "IRON_AXE"
     cost: 3

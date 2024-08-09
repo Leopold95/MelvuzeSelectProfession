@@ -15,6 +15,7 @@ public class ProfessionModel {
     private int cost;
     private int slot;
     private String command;
+    private String removeCommand;
     private String permission;
     private String material;
     //private NamespacedKey key;
